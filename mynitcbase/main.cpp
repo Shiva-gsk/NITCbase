@@ -1,14 +1,14 @@
-#include <cstdio>
-#include <cstring>
-
-#include "Buffer/BlockBuffer.h"
+#include "Buffer/StaticBuffer.h"
+#include "Cache/OpenRelTable.h"
 #include "Disk_Class/Disk.h"
+#include "FrontendInterface/FrontendInterface.h"
+#include <bits/stdc++.h>
+using namespace std;
 
-int main(int argc, char *argv[]) {
-  Disk disk_run;
 
-  // create objects for the relation catalog and attribute catalog
-  RecBuffer relCatBuffer(RELCAT_BLOCK);
+void printSchema() {
+
+	RecBuffer relCatBuffer(RELCAT_BLOCK);
 
   HeadInfo relCatHeader;
 
@@ -49,6 +49,61 @@ int main(int argc, char *argv[]) {
     }
     printf("\n");
   }
+}
+
+void updateAttributeName(const char* relName, const char* oldAttrName, const char* newAttrName){
+	bool relationFound = false;
+	bool attributeUpdated = false;
+
+	for(int attrBlockNum = ATTRCAT_BLOCK; attrBlockNum != -1; ){
+		RecBuffer attrCatBuffer(attrBlockNum);
+		HeadInfo attrCatHeader;
+		attrCatBuffer.getHeader(&attrCatHeader);
+
+		int nextAttrBlock = attrCatHeader.rblock;
+
+		for(int recordIndex = 0; recordIndex < attrCatHeader.numEntries; recordIndex++){
+			Attribute attrCatRecord[ATTRCAT_NO_ATTRS];
+			attrCatBuffer.getRecord(attrCatRecord, recordIndex);
+
+			if(strcmp(attrCatRecord[ATTRCAT_REL_NAME_INDEX].sVal, relName) != 0)
+				continue;
+
+			relationFound = true;
+
+			if(strcmp(attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, oldAttrName) != 0)
+				continue;
+
+			strncpy(attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, newAttrName, ATTR_SIZE - 1);
+			attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal[ATTR_SIZE - 1] = '\0';
+			attrCatBuffer.setRecord(attrCatRecord, recordIndex);
+
+			cout << "Updated attribute name from " << oldAttrName << " to " << newAttrName
+			     << " in relation " << relName << "\n";
+			attributeUpdated = true;
+			break;
+		}
+
+		if(attributeUpdated)
+			return;
+
+		attrBlockNum = nextAttrBlock;
+	}
+
+	if(!relationFound)
+		cout << "Relation " << relName << " not found\n";
+	else
+		cout << "Attribute " << oldAttrName << " not found in relation " << relName << "\n";
+}
+
+
+int main(int argc, char *argv[]) {
+  Disk disk_run;
+
+  // create objects for the relation catalog and attribute catalog
+  printSchema();
+  updateAttributeName("Students", "Class", "Batch");
+	printSchema();
 
   return 0;
 }
