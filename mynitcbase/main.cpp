@@ -96,14 +96,57 @@ void updateAttributeName(const char* relName, const char* oldAttrName, const cha
 		cout << "Attribute " << oldAttrName << " not found in relation " << relName << "\n";
 }
 
+void printCatalog(){
+  RelCatEntry *relCatBuf = new RelCatEntry();
+  RelCacheTable::getRelCatEntry(RELCAT_RELID, relCatBuf);
+  cout << "Relation: " << relCatBuf->relName << endl;
+
+  for (int j = 0; j < relCatBuf->numAttrs; j++)
+
+
+  {
+    AttrCatEntry *attrCatBuf = new AttrCatEntry();
+    AttrCacheTable::getAttrCatEntry(RELCAT_RELID, j, attrCatBuf);
+    cout << "  " << attrCatBuf->attrName << ": " << attrCatBuf->attrType << endl;
+  }
+
+  RelCacheTable::getRelCatEntry(ATTRCAT_RELID, relCatBuf);
+  cout << "Relation: " << relCatBuf->relName << endl;
+
+
+
+
+
+
+  for (int j = 0; j < relCatBuf->numAttrs; j++)
+  {
+    AttrCatEntry *attrCatBuf = new AttrCatEntry();
+    AttrCacheTable::getAttrCatEntry(ATTRCAT_RELID, j, attrCatBuf);
+    cout << "  " << attrCatBuf->attrName << ": " << attrCatBuf->attrType << endl;
+  }
+
+  RelCacheTable::getRelCatEntry(2, relCatBuf);
+  cout << "Relation: " << relCatBuf->relName << endl;
+
+  for (int j = 0; j < relCatBuf->numAttrs; j++)
+  {
+    AttrCatEntry *attrCatBuf = new AttrCatEntry();
+    AttrCacheTable::getAttrCatEntry(2, j, attrCatBuf);
+    cout << "  " << attrCatBuf->attrName << ": " << attrCatBuf->attrType << endl;
+}
+}
+
 
 int main(int argc, char *argv[]) {
   Disk disk_run;
+  StaticBuffer buffer;
+  OpenRelTable cache;
 
   // create objects for the relation catalog and attribute catalog
-  printSchema();
-  updateAttributeName("Students", "Class", "Batch");
-	printSchema();
+  // printSchema();
+  // updateAttributeName("Students", "Class", "Batch");
+	// printSchema();
+  printCatalog();
 
   return 0;
 }
