@@ -146,7 +146,8 @@ int main(int argc, char *argv[]) {
   // printSchema();
   // updateAttributeName("Students", "Class", "Batch");
 	// printSchema();
-  printCatalog();
+  // printCatalog();
+  return FrontendInterface::handleFrontend(argc, argv);
 
-  return 0;
+  // return 0;
 }

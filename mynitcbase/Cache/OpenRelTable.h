@@ -18,6 +18,7 @@ class OpenRelTable {
   // methods
   OpenRelTable();
   ~OpenRelTable();
+  int loadRelation(char *relName);
   static int getRelId(char relName[ATTR_SIZE]);
   static int openRel(char relName[ATTR_SIZE]);
   static int closeRel(int relId);
