@@ -22,6 +22,8 @@ class OpenRelTable {
   static int getRelId(char relName[ATTR_SIZE]);
   static int openRel(char relName[ATTR_SIZE]);
   static int closeRel(int relId);
+  static AttrCacheEntry* createAttrCacheLinkedList(int numberOfAttributes); // function to create linked list of attribute cache entries
+
 
  private:
   // field
